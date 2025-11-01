@@ -31,7 +31,13 @@ async function run() {
     const productsCollection = db.collection("product");
 
     app.get("/products", async (req, res) => {
-      const cursor = productsCollection.find();
+      const projectFields = { price_min: 1, price_max: 1, title: 1, image: 1 };
+      const cursor = productsCollection
+        .find()
+        .sort({ price_min: -1 })
+        .skip(2)
+        .limit(2)
+        .project(projectFields);
       const result = await cursor.toArray();
       res.send(result);
     });
