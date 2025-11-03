@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
@@ -32,6 +32,7 @@ async function run() {
     const bidsCollection = db.collection("bids");
     const usersCollection = db.collection("users");
 
+    // USER API
     app.post("/users", async (req, res) => {
       const newUser = req.body;
       const email = req.body.email;
@@ -47,6 +48,7 @@ async function run() {
       }
     });
 
+    // PRODUCTS API
     app.get("/products", async (req, res) => {
       // const projectFields = { price_min: 1, price_max: 1, title: 1, image: 1 };
       // const cursor = productsCollection
@@ -64,6 +66,15 @@ async function run() {
       }
 
       const cursor = productsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/latest-product", async (req, res) => {
+      const cursor = productsCollection
+        .find()
+        .sort({ created_at: -1 })
+        .limit(6);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -90,6 +101,7 @@ async function run() {
         $set: {
           name: updateProduct.name,
           price: updateProduct.price,
+          image: updateProduct.image,
         },
       };
       const result = await productsCollection.updateOne(query, update);
