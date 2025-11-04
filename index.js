@@ -79,9 +79,17 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/products/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   console.log("Requested ID:", id);
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await productsCollection.findOne(query);
+    //   res.send(result);
+    // });
+
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
+      const query = { _id: id };
       const result = await productsCollection.findOne(query);
       res.send(result);
     });
@@ -92,6 +100,23 @@ async function run() {
       res.send(result);
     });
 
+    // for products
+    // app.get("/products/:id", async (req, res) => {
+    //   try {
+    //     const id = req.params.id;
+    //     const query = { _id: new ObjectId(id) };
+    //     const product = await productsCollection.findOne(query);
+
+    //     if (!product) {
+    //       return res.status(404).send({ message: "Product not found" });
+    //     }
+
+    //     res.send(product);
+    //   } catch (error) {
+    //     res.status(500).send({ message: error.message });
+    //   }
+    // });
+
     app.patch("/products/:id", async (req, res) => {
       const id = req.params.id;
       const updateProduct = req.body;
@@ -101,7 +126,6 @@ async function run() {
         $set: {
           name: updateProduct.name,
           price: updateProduct.price,
-          image: updateProduct.image,
         },
       };
       const result = await productsCollection.updateOne(query, update);
@@ -114,6 +138,18 @@ async function run() {
       const result = await productsCollection.deleteOne(query);
       res.send(result);
     });
+
+    app.get("/products/bids/:productId", async (req, res) => {
+      const productId = req.params.productId;
+      const query = { Product: productId };
+      const cursor = bidsCollection.find(query).sort({ bid_price: -1 });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    
+
+
 
     // bids related apis
     app.get("/bids", async (req, res) => {
