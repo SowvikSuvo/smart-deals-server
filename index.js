@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -8,8 +9,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  "mongodb+srv://smartDbUser:B5gqRcYL7Vf5idyV@cluster0.6shlkl1.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.6shlkl1.mongodb.net/?appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -147,9 +147,15 @@ async function run() {
       res.send(result);
     });
 
-    
-
-
+    app.get("/bids", async (req, res) => {
+      const query = {};
+      if (query.email) {
+        query.buyer_email = email;
+      }
+      const cursor = bidsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     // bids related apis
     app.get("/bids", async (req, res) => {
@@ -175,6 +181,14 @@ async function run() {
       const result = await bidsCollection.insertOne(newBid);
       res.send(result);
     });
+
+    app.delete("/bids/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await bidsCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.delete("/bids/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
