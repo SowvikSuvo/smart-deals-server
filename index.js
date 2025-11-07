@@ -196,8 +196,6 @@ async function run() {
     //   res.send(result);
     // });
 
-    cd
-
     // bids related apis
     app.get("/bids", logger, verifyFirebaseToken, async (req, res) => {
       console.log("headers", req);
@@ -241,7 +239,7 @@ async function run() {
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
