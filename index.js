@@ -23,11 +23,12 @@ const logger = (req, res, next) => {
 
 const verifyFirebaseToken = async (req, res, next) => {
   // console.log("in the verify middleware", req.headers.authorization);
-  if (!req.headers.authorization) {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
     // do not allow to go
     return res.status(401).send({ message: "unauthorized access" });
   }
-  const token = req.headers.authorization.split(" ")[1];
+  const token = authorization.split(" ")[1];
   if (!token) {
     return res.status(401).send({ message: "unauthorized access" });
   }
@@ -194,6 +195,8 @@ async function run() {
     //   const result = await cursor.toArray();
     //   res.send(result);
     // });
+
+    cd
 
     // bids related apis
     app.get("/bids", logger, verifyFirebaseToken, async (req, res) => {
